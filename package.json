@@ -41,5 +41,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://ciniscape-server.com"
+  "proxy": "https://ciniscape-server.herokuapp.com/"
 }
