@@ -5,6 +5,7 @@ import authReducer from "./authReducer";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import errorResponse from "../../utils/errorResponse";
+import { server } from "../../utils/urls";
 
 const initialState = {
   user: null,
@@ -32,32 +33,29 @@ const AuthProvider = (props) => {
 
   const signup = async (userData) => {
     try {
-      await axios.post("/api/auth/signup", userData);
+      await axios.post(`${server}/api/auth/signu`, userData);
     } catch (error) {
-      errorResponse(error)
+      errorResponse(error);
     }
   };
 
   const login = async (userData) => {
     try {
-      const { data } = await axios.post(
-        "/api/auth/login",
-        userData
-      );
-      
-      sessionStorage.removeItem('prevSearches')
-      sessionStorage.removeItem('history')
-      sessionStorage.removeItem('homepage')
+      const { data } = await axios.post(`${server}/api/auth/login`, userData);
+
+      sessionStorage.removeItem("prevSearches");
+      sessionStorage.removeItem("history");
+      sessionStorage.removeItem("homepage");
 
       dispatch({
         type: LOGIN,
         payload: {
           token: data.token,
-          user: data.user
+          user: data.user,
         },
       });
     } catch (error) {
-      errorResponse(error)
+      errorResponse(error);
     }
   };
 
@@ -65,26 +63,20 @@ const AuthProvider = (props) => {
     dispatch({
       type: LOGOUT,
     });
-    sessionStorage.removeItem('prevSearches')
-    sessionStorage.removeItem('history')
-    sessionStorage.removeItem('homepage')
+    sessionStorage.removeItem("prevSearches");
+    sessionStorage.removeItem("history");
+    sessionStorage.removeItem("homepage");
   };
-  
+
   const values = {
     token: state.token,
     user: state.user,
     signup,
     login,
     logout,
-  }
+  };
 
-  return (
-    <AuthContext.Provider
-      value={ values }
-    >
-      {props.children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={values}>{props.children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

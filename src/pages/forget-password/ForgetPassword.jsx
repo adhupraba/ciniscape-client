@@ -67,7 +67,7 @@ const ForgetPassword = () => {
       setisLoading(true)
       if (!isResetCodeGenerated && validationService.email(form.email) === true) {
         await axios.post(
-          "api/auth/forgot-password",
+          `${server}/api/auth/forgot-password`,
           resetDetails
         );
         Notification.show({
@@ -79,7 +79,7 @@ const ForgetPassword = () => {
         resetDetails.resetCode = form.resetCode;
         resetDetails.password = form.newpassword;
 
-        await axios.post("api/auth/forgot-password", resetDetails);
+        await axios.post(`${server}/api/auth/forgot-password`, resetDetails);
 
         Notification.show({
           message: "Password successfully reseted",
