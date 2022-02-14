@@ -9,7 +9,7 @@ import validationService from "../../utils/validation";
 import Footer from "../../components/footer/Footer";
 import { useAuth } from "./../../context/auth/authState";
 import { useMovies } from "../../context/movies/movieState";
-
+import { server } from "../../utils/urls";
 import { Container, Row, Col } from "react-bootstrap";
 import Preloader from "../../components/preloader/Preloader";
 

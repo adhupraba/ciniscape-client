@@ -6,35 +6,41 @@ import Notification from "../../services/NotificationService";
 import logo from "../../assets/Images/logo.png";
 import Preloader from "../../components/preloader/Preloader";
 import axios from "axios";
-
+import { server } from "../../utils/urls";
 
 const ForgetPassword = () => {
-
   const history = useHistory();
-  const [validation, setValidation] = useState({})
+  const [validation, setValidation] = useState({});
   const [form, setForm] = useState({
     email: "",
     resetCode: "",
     newpassword: "",
-    confirmpassword: ""
-  })
-  const [isValid, setIsValid] = useState(false)
-  const [isLoading, setisLoading] = useState(false)
+    confirmpassword: "",
+  });
+  const [isValid, setIsValid] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
   const [isResetCodeGenerated, setIsResetCodeGenerated] = useState(false);
 
   const validate = () => {
     const input = form;
     const errors = {};
     errors.email = !input.email ? "" : validationService.email(input.email) ? false : "Invalid Email Address";
-    errors.newpassword = !input.newpassword ? "" : validationService.password(input.newpassword) ? false : "Minimum 5 characters, at least one uppercase, lowercase , number and special character:"
-    errors.resetCode = !input.resetCode ? "" : (input.resetCode.length === 10 && !isNaN(Number(input.resetCode))) ? false : "Enter valid reset code";
+    errors.newpassword = !input.newpassword
+      ? ""
+      : validationService.password(input.newpassword)
+      ? false
+      : "Minimum 5 characters, at least one uppercase, lowercase , number and special character:";
+    errors.resetCode = !input.resetCode
+      ? ""
+      : input.resetCode.length === 10 && !isNaN(Number(input.resetCode))
+      ? false
+      : "Enter valid reset code";
 
-    setValidation(errors)
-    return (errors.email === false && errors.newpassword === false && errors.resetCode === false) ? true : false;
-  }
+    setValidation(errors);
+    return errors.email === false && errors.newpassword === false && errors.resetCode === false ? true : false;
+  };
 
   const handleChange = (event) => {
-
     let input = form;
     input[event.target.name] = event.target.value;
 
@@ -54,22 +60,18 @@ const ForgetPassword = () => {
       setValidation(errors);
     }
 
-    setForm(input)
-    setIsValid(validate())
-  }
+    setForm(input);
+    setIsValid(validate());
+  };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     let resetDetails = {};
     resetDetails.email = form.email;
     try {
-      setisLoading(true)
+      setisLoading(true);
       if (!isResetCodeGenerated && validationService.email(form.email) === true) {
-        await axios.post(
-          `${server}/api/auth/forgot-password`,
-          resetDetails
-        );
+        await axios.post(`${server}/api/auth/forgot-password`, resetDetails);
         Notification.show({
           message: "Please check your email for verification code",
           status: true,
@@ -104,51 +106,77 @@ const ForgetPassword = () => {
         message: error.response.data.message,
         status: false,
       });
-      setisLoading(false)
+      setisLoading(false);
     }
-  }
+  };
 
   let content;
 
   if (isLoading) {
-    content = <><Preloader /></>
-  }
-  else {
-    content = <>
-      <Link to="/">
-        <img className={ classes.ForgetPasswordLogo } src={ logo } alt='forgot-password' />
-      </Link>
-      <div className={ classes.ForgetPasswordContainer }>
-        <div className={ classes.ForgetPasswordContent }>
-          <div className={ classes.ForgetPasswordHeading }>Forget password</div>
-          <form onSubmit={ handleSubmit } className={ classes.Form }>
-            <input type="email" name="email" placeholder="Enter your email" value={ form.email } onChange={ handleChange } />
-            { validation.email && <span className="text-danger pb-3">{ validation.email }</span> }
-            {
-              isResetCodeGenerated ? (
+    content = (
+      <>
+        <Preloader />
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <Link to="/">
+          <img className={classes.ForgetPasswordLogo} src={logo} alt="forgot-password" />
+        </Link>
+        <div className={classes.ForgetPasswordContainer}>
+          <div className={classes.ForgetPasswordContent}>
+            <div className={classes.ForgetPasswordHeading}>Forget password</div>
+            <form onSubmit={handleSubmit} className={classes.Form}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={form.email}
+                onChange={handleChange}
+              />
+              {validation.email && <span className="text-danger pb-3">{validation.email}</span>}
+              {isResetCodeGenerated ? (
                 <>
-                  <input type="text" name="resetCode" value={ form.resetCode } onChange={ handleChange } placeholder="resetCode" />
-                  { validation.resetCode && <span className="text-danger pb-3">{ validation.resetCode }</span> }
-                  <input type="password" name="newpassword" placeholder="New password" value={ form.newpassword } onChange={ handleChange } />
-                  { validation.newpassword && <span className="text-danger pb-3">{ validation.newpassword }</span> }
-                  <input type="password" name="confirmpassword" placeholder="Confirm password" value={ form.confirmpassword } onChange={ handleChange } />
-                  { validation.confirmPassword && <span className="text-danger pb-3">{ validation.confirmPassword }</span> }
+                  <input
+                    type="text"
+                    name="resetCode"
+                    value={form.resetCode}
+                    onChange={handleChange}
+                    placeholder="resetCode"
+                  />
+                  {validation.resetCode && <span className="text-danger pb-3">{validation.resetCode}</span>}
+                  <input
+                    type="password"
+                    name="newpassword"
+                    placeholder="New password"
+                    value={form.newpassword}
+                    onChange={handleChange}
+                  />
+                  {validation.newpassword && <span className="text-danger pb-3">{validation.newpassword}</span>}
+                  <input
+                    type="password"
+                    name="confirmpassword"
+                    placeholder="Confirm password"
+                    value={form.confirmpassword}
+                    onChange={handleChange}
+                  />
+                  {validation.confirmPassword && <span className="text-danger pb-3">{validation.confirmPassword}</span>}
                 </>
-              ) : null
-            }
-            <div className="text-center">
-              <button type="submit" className="text-white">{ !isResetCodeGenerated ? 'Get verification code' : 'Reset Password' }</button>
-            </div>
-          </form>
+              ) : null}
+              <div className="text-center">
+                <button type="submit" className="text-white">
+                  {!isResetCodeGenerated ? "Get verification code" : "Reset Password"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    );
   }
 
-
-  return (
-    content
-  );
+  return content;
 };
 
 export default ForgetPassword;
